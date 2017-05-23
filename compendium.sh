@@ -3,18 +3,13 @@
 topdir=`pwd`
 git clone --recursive https://github.com/pcubillos/pyratbay
 cd $topdir/pyratbay
-git checkout 8920b91
+git checkout 8920b91   # FINDME: update
 make
-
-# TEA patch: with a text editor open:
-$topdir/pyratbay/modules/TEA/tea/balance.py
-# And change line 147 to:
-            free_id.append(n + m)
 
 
 # Make TEA atmospheric models:
 cd $topdir/run01_atm
-python $topdir/code/runatm.py
+$topdir/code/run_atm.py
 
 # Download H2O HITEMP data:
 cd $topdir/inputs/opacity
@@ -30,4 +25,11 @@ $topdir/pyratbay/pbay.py -c opacity_H2O.cfg
 
 # :::  OK!  :::
 
+# Compute optical photospheric pressure over [Mp, Mp, Rp, Teq] grid:
+cd $topdir/run02_grid
+$topdir/code/run_emission.py
+
+# Compute transmission radii for grid:
+cd $topdir/run02_grid
+$topdir/code/run_transmission.py
 
