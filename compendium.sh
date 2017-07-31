@@ -19,17 +19,20 @@ rm -f *.zip
 
 # Compile HITEMP H2O TLI file:
 cd $topdir/run01_atm
-$topdir/pyratbay/pbay.py -c tli_H2O.cfg
+python $topdir/pyratbay/pbay.py -c tli_H2O.cfg
 # Compile opacity grid:
-$topdir/pyratbay/pbay.py -c opacity_H2O.cfg
+python $topdir/pyratbay/pbay.py -c opacity_H2O.cfg
 
-# :::  OK!  :::
-
-# Compute optical photospheric pressure over [Mp, Mp, Rp, Teq] grid:
+# Compute optical photospheric pressure over the MRTz grid:
 cd $topdir/run02_grid
-$topdir/code/run_emission.py
+python $topdir/code/run_emission.py
+
 
 # Compute transmission radii for grid:
 cd $topdir/run02_grid
-$topdir/code/run_transmission.py
+python $topdir/code/run_transmission.py
 
+
+# Figures:
+cd $topdir/
+python $topdir/code/fig_filters.py
