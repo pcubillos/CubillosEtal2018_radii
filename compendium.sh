@@ -3,13 +3,13 @@
 topdir=`pwd`
 git clone --recursive https://github.com/pcubillos/pyratbay
 cd $topdir/pyratbay
-git checkout 8920b91   # FINDME: update
+git checkout e98e5c3  # FINDME: update as necessary
 make
 
 
 # Make TEA atmospheric models:
 cd $topdir/run01_atm
-$topdir/code/run_atm.py
+python $topdir/code/run_atm.py
 
 # Download H2O HITEMP data:
 cd $topdir/inputs/opacity
