@@ -80,11 +80,8 @@ dflag = np.ones((nr, nm), bool)
 dflag[np.where(dens <  0.03)] = 0
 dflag[np.where(dens > 30.00)] = 0
 
-# Set stellar mass:
-Ms = 1.3  # Msun  (fiducial value)
-pyrat.phy.mstar = Ms * pc.msun
 # Compute orbital semi-major axis from Teq and stellar mass:
-smaxis = sma.sma(Teq, Ms) * pc.au
+smaxis = sma.sma(Teq, pyrat.phy.mstar/pc.msun) * pc.au
 
 # Metallicity:
 metal = ["0.1xsolar", "solar", "10xsolar", "100xsolar"]
@@ -92,7 +89,6 @@ nz = len(metal)
 
 # Find p0, the pressure corresponding to Rp for each model in the grid:
 for z in np.arange(nz):
-if True:
   # Reset arrays for each metallicity
   p0   [:] = 0.0
   flag [:] = False
@@ -120,7 +116,7 @@ if True:
         if not dflag[irad, imass]:
           continue
         print("\n::::::::::::::::::::::::::::::::::::\n"
-                "r={:02d}/{:02d}  m={:03d}/{:03d}  t={:02d}/{:02d}  Z={:s}\n"
+                "r={:02d}/{:02d}  m={:03d}/{:03d}  t={:02d}/{:02d}  {:s}\n"
                 "::::::::::::::::::::::::::::::::::::".
                 format(irad, nr-1, imass, nm-1, itemp, nt-1, metal[z]))
         pyrat.phy.rplanet = Rp[irad] * pc.rearth

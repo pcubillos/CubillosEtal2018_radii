@@ -1,5 +1,8 @@
 # This project:
 *.atm
+*.npz
+*.tea
+pyratbay/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
