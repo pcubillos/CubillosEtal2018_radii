@@ -23,16 +23,32 @@ python $topdir/pyratbay/pbay.py -c tli_H2O.cfg
 # Compile opacity grid:
 python $topdir/pyratbay/pbay.py -c opacity_H2O.cfg
 
+
 # Compute optical photospheric pressure over the MRTz grid:
 cd $topdir/run02_grid
 python $topdir/code/run_emission.py
-
 
 # Compute transmission radii for grid:
 cd $topdir/run02_grid
 python $topdir/code/run_transmission.py
 
 
-# Figures:
-cd $topdir/
-python $topdir/code/fig_filters.py
+# Figure 1:
+cd $topdir
+python $topdir/fig_density.py
+
+# Figure 2:
+cd $topdir/run01_atm
+python $topdir/fig_spectrum.py
+
+# Figure 3:
+cd $topdir
+python $topdir/fig_slices.py
+
+# Figure 4:
+cd $topdir
+python $topdir/fig_Lambda.py
+
+# Figure 5:
+#python $topdir/code/fig_filters.py
+
