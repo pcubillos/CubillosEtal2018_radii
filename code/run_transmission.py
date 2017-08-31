@@ -10,7 +10,6 @@ import sma   as sma
 sys.path.append("../pyratbay")
 import pyratbay as pb
 import pyratbay.constants as pc
-import pyratbay.tools     as pt
 import pyratbay.wine      as pw
 
 

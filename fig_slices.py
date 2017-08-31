@@ -60,7 +60,7 @@ yran = [5, 1e-3]
 
 
 z = 1  # Metallicity
-grid1 = np.load("run02_grid/MRT_{:s}b.npz".format(metal[z]))
+grid1 = np.load("run02_grid/MRT_{:s}.npz".format(metal[z]))
 grid2 = np.load("run02_grid/rtransit_{:s}.npz".format(metal[z]))
 p0 = [grid1["p0"]/pc.bar, grid2["pt"]/pc.bar]
 

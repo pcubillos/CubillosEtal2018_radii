@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-
 import sys, os
 import numpy as np
 
@@ -10,36 +9,6 @@ sys.path.append("../pyratbay")
 import pyratbay as pb
 import pyratbay.constants as pc
 import pyratbay.tools     as pt
-import pyratbay.wine      as pw
-import trapz     as t
-import cutils    as cu
-import blackbody as bb
-
-
-def path(pyrat):
-  if   pyrat.od.path == "eclipse":
-    radius = pyrat.atm.radius
-    diffrad = np.empty(pyrat.atm.nlayers-1, np.double)
-    cu.ediff(radius, diffrad, pyrat.atm.nlayers)
-    pyrat.od.raypath = -diffrad
-
-  elif pyrat.od.path == "transit":
-    pyrat.od.raypath = []
-    radius  = pyrat.atm.radius[pyrat.atm.rtop:]
-    nlayers = pyrat.atm.nlayers - pyrat.atm.rtop
-    # Empty-filling layers that don't contribute:
-    for r in np.arange(pyrat.atm.rtop):
-      pyrat.od.raypath.append([])
-    # Compute the path for each impact parameter:
-    r = 0
-    while r < nlayers:
-      raypath = np.empty(r, np.double)
-      for i in np.arange(r):
-        raypath[i] = (np.sqrt(radius[i  ]**2 - radius[r]**2) -
-                      np.sqrt(radius[i+1]**2 - radius[r]**2) )
-      pyrat.od.raypath.append(raypath)
-      r += 1
-  return
 
 
 # Load Pyrat object:
@@ -101,12 +70,6 @@ for z in np.arange(nz):
     pyrat.phy.smaxis = smaxis[itemp]
     # Compute mean molecular mass:
     mm = np.sum(q*pyrat.mol.mass, axis=1)
-    # Update EC and B:
-    pyrat = pb.pyrat.run(pyrat, [temp, q])
-    pyrat.od.B = np.zeros((pyrat.atm.nlayers, pyrat.spec.nwave), np.double)
-    bb.planck(pyrat.od.B, pyrat.spec.wn, pyrat.atm.temp,
-              np.tile(pyrat.atm.nlayers-1, pyrat.spec.nwave))
-
     for imass in np.flipud(np.arange(nm)):
       pyrat.phy.mplanet = Mp[imass] * pc.mearth
       pyrat.phy.rhill   = pyrat.phy.smaxis * (pyrat.phy.mplanet /
@@ -131,28 +94,9 @@ for z in np.arange(nz):
           rp[:] = p0[irad,imass+1,itemp,0]
         # Iterate (nmax times) untill ref. pressure converges:
         for i in np.arange(nmax):
-          # Atmospheric radius profile:
-          pyrat.refpressure = rp[i]
-          radius = pyrat.hydro(press, temp, mm, pyrat.phy.gplanet,
-                        pyrat.phy.mplanet, pyrat.refpressure, pyrat.phy.rplanet)
-          radius[radius<0] = np.inf
-          pyrat.atm.radius = radius
-          # Update optical depth:
-          pyrat.atm.rtop = 0
-          rtop = np.where(pyrat.atm.radius > pyrat.phy.rhill)[0]
-          if np.size(rtop) > 0:
-            pyrat.atm.rtop = rtop[-1] + 1
-          path(pyrat)
-          j = 0
-          pyrat.od.depth[:] = 0.0
-          while j < pyrat.spec.nwave:
-            rtop = pyrat.atm.rtop
-            pyrat.od.ideep[j] = t.cumtrapz(pyrat.od.depth  [rtop:,j],
-                                           pyrat.od.ec     [rtop:,j],
-                                           pyrat.od.raypath[rtop:],
-                                           pyrat.od.maxdepth) + rtop
-            j += 1
           # Compute spectra:
+          pyrat.refpressure = rp[i]
+          pyrat = pb.pyrat.run(pyrat, [temp, q])
           cf  = pt.cf(pyrat.od.depth, pyrat.atm.press, pyrat.od.B)
           bcf = pt.bandcf(cf, pyrat.obs.bandtrans, pyrat.spec.wn,
                           pyrat.obs.bandidx)

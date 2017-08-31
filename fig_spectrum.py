@@ -2,8 +2,8 @@
 
 import sys, os
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
 import scipy.interpolate as si
 from scipy.ndimage.filters import gaussian_filter1d as gaussf
 plt.ioff()
@@ -50,7 +50,7 @@ plt.plot(1e4/pyrat.spec.wn[pyrat.obs.bandidx[0]],
          pyrat.obs.bandtrans[0]*1.7e3 + yran[0], lw=lw, color="b")
 plt.plot(1e4/pyrat.obs.bandwn[0], bandflux[0], "o", ms=8,
          color="b", mec="k", mew=1.0)
-plt.ylabel(r"${\rm Transmission},\ R_{\rm p}\ (R_{\oplus})$", fontsize=fs)
+plt.ylabel(r"${\rm Transmission}\ radius\ (R_{\oplus})$", fontsize=fs)
 plt.xlabel(r"$\rm Wavelength\ (um)$",            fontsize=fs)
 plt.ylim(yran)
 # Transmittance

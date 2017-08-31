@@ -50,5 +50,10 @@ cd $topdir
 python $topdir/fig_Lambda.py
 
 # Figure 5:
-#python $topdir/code/fig_filters.py
+cd $topdir
+python $topdir/fig_filters.py
+
+# Figures 6 and 7:
+cd $topdir
+python $topdir/fig_clouds.py
 
