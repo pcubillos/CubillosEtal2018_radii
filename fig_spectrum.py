@@ -1,6 +1,5 @@
 #! /usr/bin/env python
-
-import sys, os
+import sys
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -39,23 +38,29 @@ matplotlib.rcParams.update({'xtick.labelsize':10})
 yran = 3.75, 4.83
 fs = 12
 lw = 1.5
+fcol = ["mediumblue", "limegreen", "darkorange", "r"]
+h = [np.amax(pyrat.obs.bandtrans[0]),
+     np.amax(pyrat.obs.bandtrans[1]),
+     np.amax(pyrat.obs.bandtrans[2]),
+     np.amax(pyrat.obs.bandtrans[3])]
 
 # The plot:
-plt.figure(15, (8.5, 4))
+plt.figure(-10, (8.5, 4))
 plt.clf()
 # Transmission
 ax=plt.axes([0.075, 0.25, 0.47, 0.65])
 plt.plot(1e4/pyrat.spec.wn, rtrans, lw=1.0, color="orange")
-plt.plot(1e4/pyrat.spec.wn[pyrat.obs.bandidx[0]],
-         pyrat.obs.bandtrans[0]*1.7e3 + yran[0], lw=lw, color="b")
-plt.plot(1e4/pyrat.obs.bandwn[0], bandflux[0], "o", ms=8,
-         color="b", mec="k", mew=1.0)
-plt.ylabel(r"${\rm Transmission}\ radius\ (R_{\oplus})$", fontsize=fs)
+for j in np.arange(pyrat.obs.nfilters):
+  plt.plot(1e4/pyrat.spec.wn[pyrat.obs.bandidx[j]],
+           0.16*pyrat.obs.bandtrans[j]/h[j] + yran[0], lw=lw, color=fcol[j])
+  plt.plot(1e4/pyrat.obs.bandwn[j], bandflux[j], "o", ms=6,
+           color=fcol[j], mec="k", mew=1.0)
+plt.ylabel(r"${\rm Transmission\ radius}\ (R_{\oplus})$", fontsize=fs)
 plt.xlabel(r"$\rm Wavelength\ (um)$",            fontsize=fs)
 plt.ylim(yran)
 # Transmittance
 ax=plt.axes([0.61, 0.25, 0.12, 0.65])
-plt.plot(bcft[0], pyrat.atm.radius/pc.rearth, lw=lw, color="b")
+plt.plot(bcft[0], pyrat.atm.radius/pc.rearth, lw=lw, color=fcol[0])
 ax.set_xticks([0, 0.5, 1.0])
 plt.ylim(yran)
 plt.xlim(-0.02, 1.02)
@@ -65,7 +70,7 @@ plt.xlabel(r"${\rm Transmittance}$", fontsize=fs)
 ax=plt.axes([0.81, 0.25, 0.12, 0.65])
 ax2 = plt.twinx()
 ax2.plot(bcf[0]/np.amax(bcf[0]), pyrat.atm.radius/pc.rearth,
-         lw=lw, color="b", ls="-")
+         lw=lw, color=fcol[0], ls="-")
 ax2.set_ylim(yran)
 ax2.set_xlim(-0.02, 1.12)
 ax2.set_xticks([0, 0.5, 1.0])
@@ -79,4 +84,3 @@ ax.set_yticklabels(syticks)
 ax.set_ylabel(r"$\rm Pressure\ (bar)$", fontsize=fs)
 ax.set_xlabel(r"$\rm Contrib.\ function$", fontsize=fs)
 plt.savefig("../figs/neptune_spectrum.ps")
-

@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-import sys, os
+import sys
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt

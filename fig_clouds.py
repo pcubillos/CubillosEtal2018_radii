@@ -1,14 +1,17 @@
 #! /usr/bin/env python
-import sys, os
+import sys
 import numpy as np
 import scipy.interpolate as si
-import scipy.constants as sc
+import scipy.constants   as sc
+import matplotlib
+import matplotlib.pyplot as plt
+plt.ioff()
 
 sys.path.append("./code")
 import colormaps as cm
+import sma       as sma
 
-#sys.path.append("../pyratbay")
-sys.path.append("/home/pcubillos/Dropbox/IWF/projects/2014_pyratbay/2016-01-08_develop/pyratbay")
+sys.path.append("./pyratbay")
 import pyratbay.constants  as pc
 import pyratbay.atmosphere as pa
 
@@ -18,6 +21,9 @@ grid  = np.load("run02_grid/MRT_solarb.npz")
 Rp, Mp, Teq = grid["Rp"], grid["Mp"], grid["Teq"]
 nr, nm, nt  = len(Rp), len(Mp), len(Teq)
 smaxis = sma.sma(Teq,1.3) * pc.au
+
+metal = ["0.1xsolar", "solar", "10xsolar", "100xsolar"]
+nz = len(metal)
 
 # Lambda:
 mh = sc.m_p + sc.m_e
@@ -43,15 +49,10 @@ palette.set_bad(color='w')
 lw = 1.25
 fs = 12
 
-metal = ["0.1xsolar", "solar", "10xsolar", "100xsolar"]
-nz = len(metal)
 
-
-#for z in np.arange(nz):
-z = 1
-if True:
-  grid  = np.load("run02_grid/MRT_{:s}b.npz".format(metal[z]))
-  tgrid = np.load("run02_grid/rtransit_{:s}0.npz".format(metal[z]))
+for z in np.arange(nz):
+  grid  = np.load("run02_grid/MRT_{:s}.npz".format(metal[z]))
+  tgrid = np.load("run02_grid/rtransit_{:s}.npz".format(metal[z]))
   p0 = grid ["p0"][:,:,:,0]
   Rt = tgrid["Rt"][:,:,:,0]
 
@@ -93,8 +94,8 @@ if True:
 
   # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   # The plot:
-  matplotlib.rcParams.update({'ytick.labelsize':"medium"})
-  matplotlib.rcParams.update({'xtick.labelsize':"medium"})
+  matplotlib.rcParams.update({'ytick.labelsize':10})
+  matplotlib.rcParams.update({'xtick.labelsize':10})
   plt.figure(11, (8.5, 4))
   plt.clf()
   plt.subplots_adjust(0.07, 0.13, 0.88, 0.97, hspace=0.05, wspace=0.05)
@@ -108,9 +109,7 @@ if True:
     plt.pcolor(Mplot, Rplot, Z, edgecolors="face",
                vmin=Zmin, vmax=Zmax, cmap=palette)
     rlambda10 = 0.1*sc.G*(Mp*pc.mearth)*mh/(10.0*sc.k*Teq[i])/pc.rearth
-    rlambda50 = 0.1*sc.G*(Mp*pc.mearth)*mh/(50.0*sc.k*Teq[i])/pc.rearth
     plt.plot(Mp, rlambda10, "limegreen", lw=lw)
-    #plt.plot(Mp, rlambda50, "b--", lw=lw)
     ax.set_xscale('log')
     if j%4 == 0:
       plt.ylabel(r"${\rm Radius}\ (R_{\oplus})$", fontsize=fs)
@@ -127,12 +126,12 @@ if True:
     j += 1
   cax = plt.axes([0.89, 0.13, 0.016, 0.84])
   cax = plt.colorbar(cax=cax)
-  cax.set_label(r"${\rm Transit\ radius\ difference}\ \ (\%)$", fontsize=fs)
+  cax.set_label(r"$\Delta R_{\rm c}/R\ \ (\%)$", fontsize=fs)
+
   cbticks = [0, 50, 100, 150, 200]
   cax.set_ticks(cbticks)
   cax.set_ticklabels([r"$0$", r"$50$", r"$100$", r"$150$", r"$>200$"])
   cax.solids.set_edgecolor("face")
-  plt.show()
   plt.savefig("./figs/cloud_transit_{:s}.ps".format(metal[z]))
 
 
@@ -164,19 +163,20 @@ if True:
   plt.xscale("log")
   plt.yscale("log")
   plt.xlabel(r"$\Lambda$", fontsize=fs2)
-  plt.ylabel(r"${\rm Transit\ radius\ difference}\ \ (\%)$", fontsize=fs2)
+  plt.ylabel(r"$\Delta R_{\rm c}/R\ \ (\%)$", fontsize=fs2)
   plt.xlim(9, 4000)
   plt.ylim(0.1, 300)
 
-  a = np.logspace(1,3.5, 100)
-  c= -1
-  b = 400*a**c
-  plt.plot(a, b, color="limegreen", lw=2)
+  if z == 1:
+    a = np.logspace(0.1, 4.0, 100)
+    c= -1
+    b = 400*a**c
+    plt.plot(a, b, color="limegreen", lw=2, linestyle="--")
   # Colorbar
   bb = ax.get_position()
   ax2 = fig.add_axes([0.86, bb.y0, 0.025, bb.height])
-  norm = mpl.colors.Normalize(vmin=0, vmax=255)
-  cb1 = mpl.colorbar.ColorbarBase(ax2, cmap=cm.plasma, norm=norm,
+  norm = matplotlib.colors.Normalize(vmin=0, vmax=255)
+  cb1 = matplotlib.colorbar.ColorbarBase(ax2, cmap=cm.plasma, norm=norm,
                                   orientation='vertical')
   cb1.set_label(r"${\rm Temperature\ (K)}$", fontsize=fs2)
   tl = np.linspace(300, 3000, 10, dtype=int)

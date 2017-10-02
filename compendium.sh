@@ -3,7 +3,7 @@
 topdir=`pwd`
 git clone --recursive https://github.com/pcubillos/pyratbay
 cd $topdir/pyratbay
-git checkout e98e5c3  # FINDME: update as necessary
+git checkout 80fd85d
 make
 
 
@@ -49,11 +49,10 @@ python $topdir/fig_slices.py
 cd $topdir
 python $topdir/fig_Lambda.py
 
-# Figure 5:
-cd $topdir
-python $topdir/fig_filters.py
-
-# Figures 6 and 7:
+# Figures 5 and 6:
 cd $topdir
 python $topdir/fig_clouds.py
 
+# Figure 7:
+cd $topdir
+python $topdir/fig_metal.py
