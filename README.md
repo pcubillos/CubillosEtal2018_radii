@@ -10,7 +10,7 @@
 
 This paper was submitted to the Astronomy and Astrophysics Journals.  Download the compendium to your local machine with the following command:
 ```shell
-git clone https://github.com/pcubillos/Cubillos2017_repack
+git clone https://github.com/pcubillos/CubillosEtal2017_radii
 ```
 Then, follow the commands in '**compendium.sh**'.  This Shell script contains all necessary instructions to reproduce the analysis and figures of this manuscript.
 
