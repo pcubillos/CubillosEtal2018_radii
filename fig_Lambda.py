@@ -54,9 +54,9 @@ for i in np.arange(len(itemp)):
   plt.pcolor(Mplot, Rplot, np.log10(Z), edgecolors="face",
              vmin=np.log10(Zmin), vmax=np.log10(Zmax), cmap=palette)
   rlambda10 = 0.1*sc.G*(Mp*pc.mearth)*mh/(10.0*sc.k*Teq[it])/pc.rearth
-  rlambda01 = 0.1*sc.G*(Mp*pc.mearth)*mh/( 1.5*sc.k*Teq[it])/pc.rearth
-  plt.plot(Mp, rlambda10, "limegreen", lw=lw)
-  plt.plot(Mp, rlambda01, "green",     lw=lw)
+  rlambda20 = 0.1*sc.G*(Mp*pc.mearth)*mh/(20.0*sc.k*Teq[it])/pc.rearth
+  plt.plot(Mp, rlambda10, "green",     lw=lw)
+  plt.plot(Mp, rlambda20, "limegreen", lw=lw)
   #Rh = Mp**(1/3.) * (Teq[it]/(1.75*3000))**-2
   #plt.plot(Mp, Rh, "-", color="orangered", lw=lw)
   ax.set_xscale('log')

@@ -109,7 +109,9 @@ for z in np.arange(nz):
     plt.pcolor(Mplot, Rplot, Z, edgecolors="face",
                vmin=Zmin, vmax=Zmax, cmap=palette)
     rlambda10 = 0.1*sc.G*(Mp*pc.mearth)*mh/(10.0*sc.k*Teq[i])/pc.rearth
-    plt.plot(Mp, rlambda10, "limegreen", lw=lw)
+    rlambda20 = 0.1*sc.G*(Mp*pc.mearth)*mh/(20.0*sc.k*Teq[i])/pc.rearth
+    plt.plot(Mp, rlambda10, "green",     lw=lw)
+    plt.plot(Mp, rlambda20, "limegreen", lw=lw)
     ax.set_xscale('log')
     if j%4 == 0:
       plt.ylabel(r"${\rm Radius}\ (R_{\oplus})$", fontsize=fs)
