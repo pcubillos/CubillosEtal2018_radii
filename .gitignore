@@ -2,6 +2,8 @@
 *.atm
 *.npz
 *.tea
+*.tli
+run*/*.dat
 pyratbay/
 
 # Byte-compiled / optimized / DLL files
