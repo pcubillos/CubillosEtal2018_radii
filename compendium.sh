@@ -45,9 +45,8 @@ python $topdir/pyratbay/scripts/PFformat_Exomol.py  \
 python $topdir/pyratbay/scripts/PFformat_Exomol.py \
        $topdir/inputs/opacity/12C-1H4__YT10to10.pf
 
-# Repack line-transition data:
+# Repack large line-transition datasets:
 cd $topdir/run01_atm
-#$topdir/repack/repack.py repack_HCN.cfg
 $topdir/repack/repack.py repack_NH3.cfg
 $topdir/repack/repack.py repack_CH4.cfg
 
@@ -84,20 +83,28 @@ python $topdir/fig_density.py
 
 # Figure 2:
 cd $topdir/run01_atm
-python $topdir/fig_spectrum.py
+python $topdir/fig_opacity.py
 
 # Figure 3:
-cd $topdir
-python $topdir/fig_slices.py
+cd $topdir/run01_atm
+python $topdir/fig_spectrum.py
 
 # Figure 4:
 cd $topdir
+python $topdir/fig_slices.py
+
+# Figure 5:
+cd $topdir
 python $topdir/fig_Lambda.py
 
-# Figures 5 and 6:
+# Figure 6:
+cd $topdir/run01_atm
+python $topdir/fig_mean_opacity.py
+
+# Figures 7 and 8:
 cd $topdir
 python $topdir/fig_clouds.py
 
-# Figure 7:
+# Figure 9:
 cd $topdir
 python $topdir/fig_metal.py

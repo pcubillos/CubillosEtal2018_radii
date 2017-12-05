@@ -17,7 +17,7 @@ import pyratbay.atmosphere as pa
 
 
 # The grid:
-grid  = np.load("run02_grid/MRT_solarb.npz")
+grid  = np.load("run02_grid/MRT_solar.npz")
 Rp, Mp, Teq = grid["Rp"], grid["Mp"], grid["Teq"]
 nr, nm, nt  = len(Rp), len(Mp), len(Teq)
 smaxis = sma.sma(Teq,1.3) * pc.au

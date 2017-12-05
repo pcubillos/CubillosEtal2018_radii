@@ -83,10 +83,10 @@ for z in np.arange(len(metal)):
       for k in np.arange(0, Wlen[t], 3):
         plt.plot(X[t], Y[t][k], lw=lw, color=palette[t](col(k,t)))
       # Boil-off models:
-      # for k in np.arange(0, Wlen[t], 3):
-      #   m = M[t][k]
-      #   if np.sum(m) > 0:
-      #     plt.plot(X[t][m], Y[t][k][m], "xr", mew=1.5)
+      #for k in np.arange(0, Wlen[t], 3):
+      #  m = M[t][k]
+      #  if np.sum(m) > 0:
+      #    plt.plot(X[t][m], Y[t][k][m], "x", mew=1.25, color="0.6", zorder=0)
       plt.xlim(Xl[t])
       plt.ylim(yran)
       if t == 1:

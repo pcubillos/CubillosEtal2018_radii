@@ -58,6 +58,7 @@ for j in np.arange(pyrat.obs.nfilters):
 plt.ylabel(r"${\rm Transmission\ radius}\ (R_{\oplus})$", fontsize=fs)
 plt.xlabel(r"$\rm Wavelength\ (um)$",            fontsize=fs)
 plt.ylim(yran)
+plt.xlim(0.3, 1.2)
 # Transmittance
 ax=plt.axes([0.61, 0.25, 0.12, 0.65])
 plt.plot(bcft[0], pyrat.atm.radius/pc.rearth, lw=lw, color=fcol[0])
