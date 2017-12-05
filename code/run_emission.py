@@ -15,68 +15,6 @@ import pyratbay.tools      as pt
 import pyratbay.atmosphere as pa
 
 
-# Load Pyrat object:
-pyrat   = pb.pyrat.init("MRTz_grid.cfg")
-press   = pyrat.atm.press    # Atmospheric pressure array (barye)
-nlayers = pyrat.atm.nlayers
-pyrat.verb = 0  # Mute it
-
-# Create new grid:
-nf = pyrat.obs.nfilters  # Number of observing filter
-nt = 28  # Number of temperature values
-nr = 79  # Number of planetary radius values
-nm = 45  # Number of planetary mass values
-# The arrays:
-Teq = np.linspace(300, 3000, nt)  # K
-Rp  = np.linspace(1.0, 40.0, nr)  # Rearth
-Mp  = np.logspace(np.log10(1.0), np.log10(630), 45)  # Mearth
-Mp[-1]  = 600.0
-
-# Number of parallel CPUs:
-ncpu = 23
-
-
-# Shared memory arrays:
-sm_p0    = mp.Array(ctypes.c_double, nr*nm*nt*nf)
-sm_flag  = mp.Array(ctypes.c_int,       nm*nt)  # ctypeslib fails for c_bool
-sm_niter = mp.Array(ctypes.c_int,    nr*nm*nt)
-sm_Hhill = mp.Array(ctypes.c_double, nr*nm*nt)
-# See description in the worker() docstring:
-p0    = np.ctypeslib.as_array(sm_p0.get_obj()   ).reshape((nr,nm,nt,nf))
-flag  = np.ctypeslib.as_array(sm_flag.get_obj() ).reshape((   nm,nt))
-niter = np.ctypeslib.as_array(sm_niter.get_obj()).reshape((nr,nm,nt))
-Hhill = np.ctypeslib.as_array(sm_Hhill.get_obj()).reshape((nr,nm,nt))
-
-
-# Metallicity:
-metal = ["0.1xsolar", "solar", "10xsolar", "100xsolar"]
-nz = len(metal)
-
-
-# Main loop:
-for z in np.arange(nz):
-  # Reset arrays for each metallicity
-  p0   [:] = 0.0
-  flag [:] = 0
-  niter[:] = 0
-  Hhill[:] = 0.0
-
-  # Start subprocesses:
-  procs = []
-  for i in np.arange(ncpu):
-    i0 = int(i*nt/ncpu)
-    p = mp.Process(target=worker, args=(pyrat, p0, sm_flag, niter, Hhill, i0,
-                metal[z], Rp, Mp, Teq, i))
-    p.start()
-    procs.append(p)
-  # Wait until they probe the whole grid:
-  for i in np.arange(ncpu):
-    procs[i].join()
-  # Final save:
-  np.savez("MRT_{:s}.npz".format(metal[z]), Rp=Rp, Mp=Mp, Teq=Teq,
-           p0=p0, niter=niter, Hhill=Hhill)
-
-
 def worker(pyrat, p0, sm_flag, niter, Hhill, itemp, metal, Rp, Mp, Teq, ID):
   """
   Compute the photospheric pressure (p0) corresponding to Rp for each
@@ -216,3 +154,62 @@ def worker(pyrat, p0, sm_flag, niter, Hhill, itemp, metal, Rp, Mp, Teq, ID):
              p0=p0, niter=niter, Hhill=Hhill)
     print("Completed {}/{} [ID={}, {}/{}]".format(np.sum(flag), nm*nt,
                                                   ID, itemp, imass))
+
+
+# Load Pyrat object:
+pyrat   = pb.pyrat.init("MRTz_grid.cfg")
+press   = pyrat.atm.press    # Atmospheric pressure array (barye)
+nlayers = pyrat.atm.nlayers
+pyrat.verb = 0  # Mute it
+
+# Metallicity:
+metal = ["0.1xsolar", "solar", "10xsolar", "100xsolar"]
+nz = len(metal)
+
+# Create new grid:
+nf = pyrat.obs.nfilters  # Number of observing filter
+nt = 28  # Number of temperature values
+nr = 79  # Number of planetary radius values
+nm = 45  # Number of planetary mass values
+# The arrays:
+Teq = np.linspace(300, 3000, nt)  # K
+Rp  = np.linspace(1.0, 40.0, nr)  # Rearth
+Mp  = np.logspace(np.log10(1.0), np.log10(630), 45)  # Mearth
+Mp[-1]  = 600.0
+
+# Number of parallel CPUs:
+ncpu = 23
+
+# Shared memory arrays:
+sm_p0    = mp.Array(ctypes.c_double, nr*nm*nt*nf)
+sm_flag  = mp.Array(ctypes.c_int,       nm*nt)  # ctypeslib fails for c_bool
+sm_niter = mp.Array(ctypes.c_int,    nr*nm*nt)
+sm_Hhill = mp.Array(ctypes.c_double, nr*nm*nt)
+# See description in the worker() docstring:
+p0    = np.ctypeslib.as_array(sm_p0.get_obj()   ).reshape((nr,nm,nt,nf))
+flag  = np.ctypeslib.as_array(sm_flag.get_obj() ).reshape((   nm,nt))
+niter = np.ctypeslib.as_array(sm_niter.get_obj()).reshape((nr,nm,nt))
+Hhill = np.ctypeslib.as_array(sm_Hhill.get_obj()).reshape((nr,nm,nt))
+
+# Main loop:
+for z in np.arange(nz):
+  # Reset arrays for each metallicity
+  p0   [:] = 0.0
+  flag [:] = 0
+  niter[:] = 0
+  Hhill[:] = 0.0
+
+  # Start subprocesses:
+  procs = []
+  for i in np.arange(ncpu):
+    i0 = int(i*nt/ncpu)
+    p = mp.Process(target=worker, args=(pyrat, p0, sm_flag, niter, Hhill, i0,
+                metal[z], Rp, Mp, Teq, i))
+    p.start()
+    procs.append(p)
+  # Wait until they probe the whole grid:
+  for i in np.arange(ncpu):
+    procs[i].join()
+  # Final save:
+  np.savez("MRT_{:s}.npz".format(metal[z]), Rp=Rp, Mp=Mp, Teq=Teq,
+           p0=p0, niter=niter, Hhill=Hhill)
