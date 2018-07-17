@@ -3,7 +3,7 @@
 topdir=`pwd`
 git clone --recursive https://github.com/pcubillos/pyratbay
 cd $topdir/pyratbay
-git checkout 0ddd082
+git checkout eef3464  # Update as necessary
 make
 
 cd $topdir
@@ -19,13 +19,13 @@ python $topdir/code/run_atm.py
 
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# Download H2O HITEMP data:
+# Download H2O/CO2/CO HITEMP and CH4/HITRAN data:
 cd $topdir/inputs/opacity
-wget --user=HITRAN --password=getdata -N -i wget_hitemp-H2O_0.3-1.2um.txt
-wget --user=HITRAN --password=getdata -N -i wget_hitemp_CO2_0.3-1.2um.txt
+wget --user=HITRAN --password=getdata -N -i wget_hitemp_H2O-CO2-CO_0.3-33um.txt
+wget --user=HITRAN --password=getdata -N -i wget_hitran_CH4.txt
 unzip '*.zip'
 rm -f *.zip
-# Download Exomol data:
+# Download NH3/CH4 ExoMol data:
 wget -i wget_exomol_HCN.txt
 bzip2 -d 1H-*.bz2  # Unzip only the HCN data
 wget -i wget_exomol_NH3_0.3-1.2um.txt
